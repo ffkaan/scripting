@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# Docker'ın Ubuntu 20.04 üzerinde kurulumunu gerçekleştiren bash script
+
+# Gerekli paketlerin güncellenmesi
+sudo apt update
+
+# Ek paketlerin yüklenmesi
+sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
+
+# Docker'ın resmi GPG anahtarının eklenmesi
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+
+# Docker deposunun eklenmesi
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# Paketlerin güncellenmesi
+sudo apt update
+
+# Docker'ın kurulması
+sudo apt install -y docker-ce docker-ce-cli containerd.io
+
+# Docker'ın çalıştırılabilir olmasının sağlanması
+sudo systemctl enable docker
+
+# Docker komutlarının root olmadan da çalıştırılabilmesi için kullanıcıyı "docker" grubuna eklemek
+sudo usermod -aG docker $USER
+
+# Docker'ın başarıyla kurulup kurulmadığını kontrol etmek için bir konteyner çalıştırma
+sudo docker run hello-world
+
+# Docker Compose'ın Ubuntu 20.04 üzerinde kurulumunu gerçekleştiren bash script
+
+# Docker Compose sürümünü buradan değiştirebilirsiniz
+COMPOSE_VERSION=1.29.2
+
+# Docker Compose'un indirilmesi
+sudo curl -L "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+
+# Docker Compose dosyasına çalıştırma izni verilmesi
+sudo chmod +x /usr/local/bin/docker-compose
+
+# Docker Compose sürümünün doğrulanması
+docker-compose --version
